@@ -24,7 +24,8 @@ The following **optional** features are implemented:
 * [O] Tweak the style improving the UI / UX, play with colors, images or backgrounds
 
 The following **additional** features are implemented:
-
+* [O] long click to trigger editview
+* [O] close app by back press
 * [O] use [greenDao](http://greendao-orm.com/) as ORM model generator, which the dao module generator project is also included as a module.
 * [O] Try to integrate [EventBus](http://greenrobot.github.io/EventBus/) library to
          1. unify the communication interface between components

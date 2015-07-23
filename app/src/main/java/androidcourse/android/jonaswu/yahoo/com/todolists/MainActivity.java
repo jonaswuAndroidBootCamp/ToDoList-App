@@ -145,9 +145,15 @@ public class MainActivity extends BaseFragmentActivity {
         EventBus.getDefault().register(this);
     }
 
+    @Override
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
 }
