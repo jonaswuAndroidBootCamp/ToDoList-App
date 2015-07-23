@@ -2,6 +2,7 @@ package androidcourse.android.jonaswu.yahoo.com.todolists;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -23,13 +25,31 @@ public class MainActivity extends FragmentActivity implements EditNameDialog.Edi
     private Button button;
     private EditText edit;
     private todolistDao todoDao;
+    private boolean doubleBackToExitPressedOnce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initDb();
         initView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initDb();
+        // initial item list
+        QueryBuilder qb = todoDao.queryBuilder();
+        List result = qb.list();
+        for (int i = 0; i < result.size(); i++) {
+            todolist item = (todolist) result.get(i);
+            customizeAdapter.addItem(new ToDoItem(Integer.valueOf(item.getId().toString()), item.getName()));
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     private void initDb() {
@@ -54,14 +74,6 @@ public class MainActivity extends FragmentActivity implements EditNameDialog.Edi
                 return true;
             }
         });
-
-        // initial item list
-        QueryBuilder qb = todoDao.queryBuilder();
-        List result = qb.list();
-        for (int i = 0; i < result.size(); i++) {
-            todolist item = (todolist) result.get(i);
-            customizeAdapter.addItem(new ToDoItem(Integer.valueOf(item.getId().toString()), item.getName()));
-        }
 
         // initial panel
         button = (Button) findViewById(R.id.addButton);
@@ -93,20 +105,25 @@ public class MainActivity extends FragmentActivity implements EditNameDialog.Edi
 
     @Override
     public void onFinishEditDialog(int position, String inputText) {
-        // get item id from position
-        ToDoItem item = customizeAdapter.getItem(position);
-        item.name = inputText;
-        // update item
-        customizeAdapter.setItem(position, item);
 
-        // update sql
+        ToDoItem item = customizeAdapter.getItem(position);
         int id = item.id;
         Query query = todoDao.queryBuilder().where(
                 todolistDao.Properties.Id.eq(id))
                 .build();
-        todolist result = (todolist) query.list().get(0);
-        result.setName(inputText);
-
+        todolist dbItem = (todolist) query.list().get(0);
+        if (inputText.length() > 0) {
+            // get item id from position
+            item.name = inputText;
+            // update item
+            customizeAdapter.setItem(position, item);
+            // update sql
+            dbItem.setName(inputText);
+            todoDao.insertOrReplaceInTx(dbItem);
+        } else {
+            todoDao.delete(dbItem);
+            customizeAdapter.deleteItem(position);
+        }
     }
 
 }

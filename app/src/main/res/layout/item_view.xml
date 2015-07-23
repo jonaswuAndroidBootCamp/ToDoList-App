@@ -20,6 +20,6 @@
         android:cursorVisible="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:layout_marginLeft="6dip"
+        android:layout_marginLeft="4dip"
         android:layout_marginRight="6dip" />
 </LinearLayout>

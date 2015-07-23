@@ -41,6 +41,10 @@ public class CustomizeAdapter extends BaseAdapter {
         this.notifyDataSetChanged();
     }
 
+    public void deleteItem(int id) {
+        listItem.remove(id);
+    }
+
     @Override
     public int getCount() {
         return listItem.size();

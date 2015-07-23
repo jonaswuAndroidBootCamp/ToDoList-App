@@ -6,6 +6,6 @@
     <!-- use this for a background colour -->
     <solid android:color="#f9f9f9" />
     <stroke
-        android:width="6dip"
+        android:width="4dip"
         android:color="#cecece" />
 </shape>
