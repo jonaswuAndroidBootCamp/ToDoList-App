@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  */
 public class CustomizeAdapter extends BaseAdapter {
 
-    private ArrayList<String> listItem = new ArrayList<String>();
+    private ArrayList<ToDoItem> listItem = new ArrayList<ToDoItem>();
     private Context context;
 
     public CustomizeAdapter(Context context) {
@@ -24,9 +25,20 @@ public class CustomizeAdapter extends BaseAdapter {
         this.context = context;
     }
 
-    public CustomizeAdapter(Context context, ArrayList<String> listItem) {
+    public CustomizeAdapter(Context context, ArrayList<ToDoItem> listItem) {
         this(context);
+        listItem = new ArrayList<>();
         this.listItem = listItem;
+    }
+
+    public void setItem(int id, ToDoItem value) {
+        listItem.set(id, value);
+        this.notifyDataSetChanged();
+    }
+
+    public void addItem(ToDoItem value) {
+        listItem.add(value);
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -35,7 +47,7 @@ public class CustomizeAdapter extends BaseAdapter {
     }
 
     @Override
-    public String getItem(int position) {
+    public ToDoItem getItem(int position) {
         return listItem.get(position);
     }
 
@@ -52,34 +64,9 @@ public class CustomizeAdapter extends BaseAdapter {
             vi = LayoutInflater.from(context);
             v = vi.inflate(R.layout.item_view, null);
         }
-        String p = this.getItem(position);
-        EditText edit = (EditText) v.findViewById(R.id.edit);
-        edit.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                EditText me = ((EditText) v);
-                me.setClickable(true);
-                me.setCursorVisible(true);
-                me.setFocusable(true);
-                me.setFocusableInTouchMode(true);
-                me.setBackgroundResource(R.drawable.focus_item);
-                return true;
-            }
-        });
-        edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    EditText me = ((EditText) v);
-                    me.setClickable(false);
-                    me.setCursorVisible(false);
-                    me.setFocusable(false);
-                    me.setFocusableInTouchMode(false);
-                    me.setBackgroundColor(Color.TRANSPARENT);
-                }
-            }
-        });
-        edit.setText(p);
+        ToDoItem p = this.getItem(position);
+        TextView name = (TextView) v.findViewById(R.id.name);
+        name.setText(p.name);
         return v;
     }
 }
