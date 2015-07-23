@@ -25,24 +25,24 @@ public class CustomizeAdapter extends BaseAdapter {
         this.context = context;
     }
 
-    public CustomizeAdapter(Context context, ArrayList<ToDoItem> listItem) {
-        this(context);
-        listItem = new ArrayList<>();
-        this.listItem = listItem;
-    }
-
     public void setItem(int id, ToDoItem value) {
         listItem.set(id, value);
         this.notifyDataSetChanged();
     }
 
     public void addItem(ToDoItem value) {
-        listItem.add(value);
+        this.addItemWithoutNotifyChange(value);
         this.notifyDataSetChanged();
     }
 
+    public void addItemWithoutNotifyChange(ToDoItem value) {
+        listItem.add(value);
+    }
+
+
     public void deleteItem(int id) {
         listItem.remove(id);
+        this.notifyDataSetChanged();
     }
 
     @Override

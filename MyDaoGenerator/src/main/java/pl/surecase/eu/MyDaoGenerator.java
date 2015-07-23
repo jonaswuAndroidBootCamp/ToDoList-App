@@ -7,7 +7,7 @@ import de.greenrobot.daogenerator.Schema;
 public class MyDaoGenerator {
 
     public static void main(String args[]) throws Exception {
-        Schema schema = new Schema(2, "androidcourse.android.jonaswu.yahoo.com.todolists");
+        Schema schema = new Schema(3, "androidcourse.android.jonaswu.yahoo.com.todolists.dao_helper");
         Entity box = schema.addEntity("todolist");
         box.addIdProperty();
         box.addStringProperty("name");

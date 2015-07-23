@@ -11,25 +11,28 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import de.greenrobot.event.EventBus;
+
 public class EditNameDialog extends DialogFragment implements TextView.OnEditorActionListener {
 
     private EditText mEditText;
+    private MainActivity.UpdateItem updateItem;
 
     public EditNameDialog() {
         // Empty constructor required for DialogFragment
     }
 
-    //  interface for caller
-    public interface EditNameDialogListener {
-        void onFinishEditDialog(int id, String inputText);
+    public MainActivity.UpdateItem getUpdateItem() {
+        return updateItem;
     }
 
-    public static EditNameDialog newInstance(int id, String name) {
+    public void setUpdateItem(MainActivity.UpdateItem updateItem) {
+        this.updateItem = updateItem;
+    }
+
+    public static EditNameDialog newInstance(MainActivity.UpdateItem updateItem) {
         EditNameDialog frag = new EditNameDialog();
-        Bundle args = new Bundle();
-        args.putString("name", name);
-        args.putInt("id", id);
-        frag.setArguments(args);
+        frag.setUpdateItem(updateItem);
         return frag;
     }
 
@@ -38,8 +41,7 @@ public class EditNameDialog extends DialogFragment implements TextView.OnEditorA
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_name, container);
         mEditText = (EditText) view.findViewById(R.id.txt_your_name);
-        String name = getArguments().getString("name", "");
-        mEditText.setText(name);
+        mEditText.setText(updateItem.name);
         getDialog().setTitle("Edit name");
         // Show soft keyboard automatically
         mEditText.requestFocus();
@@ -52,9 +54,8 @@ public class EditNameDialog extends DialogFragment implements TextView.OnEditorA
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (EditorInfo.IME_ACTION_DONE == actionId) {
-            // Return input text to activity
-            EditNameDialogListener listener = (EditNameDialogListener) getActivity();
-            listener.onFinishEditDialog(getArguments().getInt("id"), mEditText.getText().toString());
+            updateItem.name = mEditText.getText().toString();
+            EventBus.getDefault().post(updateItem);
             dismiss();
             return true;
         }
